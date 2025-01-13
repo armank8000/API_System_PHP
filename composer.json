@@ -1,0 +1,26 @@
+{
+    "name": "arman/learnphp",
+    "description": "A simple Restful api",
+    "autoload": {
+        "psr-4": {
+            "PH7\\Learnphp\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "arman kumar",
+            "email": "armank8000@gmail.com"
+        }
+    ],
+    "config": {
+        "platform": {
+            "php": "8.2.1"
+        }
+    },
+
+    "require": {
+        "php": ">=8.1.0",
+        "firebase/php-jwt": "^6.10",
+        "respect/validation": "^2.4"
+    }
+}
