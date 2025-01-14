@@ -27,12 +27,12 @@ $postbody = json_decode(file_get_contents('php://input'));
 //    $lname = $postbody['last'];
 //    $email = $postbody['email'];
 //    $phone = $postbody['phone'] ?? "151115151";
-//
+
 //print_r($postbody);
 
 
 
-   // $user = new User($fname." ".$lname, $email, $phone);
+    //$user = new User($fname." ".$lname, $email, $phone);
     $user = new User(" arman", "kumar", "62622611");
 
    try {

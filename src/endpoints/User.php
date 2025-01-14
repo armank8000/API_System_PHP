@@ -3,7 +3,9 @@ namespace PH7\Learnphp\endpoints;
 
 
 
+use PH7\JustHttp\StatusCode;
 use PH7\Learnphp\exception\InvalidValidationException;
+use PH7\PhpHttpResponseHeader\Http;
 use Respect\Validation\Validator as v;
 class User{
     public function __construct(
@@ -17,6 +19,7 @@ public readonly string $phone,
     }
 
     public function create(mixed $data): object{
+         print_r($data);
         $minimumNameLength = 2;
         $maximumNameLength = 30;
 
@@ -29,6 +32,7 @@ public readonly string $phone,
         return $data;
     }
     else{
+        Http::setHeadersByCode(StatusCode::BAD_REQUEST);
         throw new InvalidValidationException("invalid data");
     }
 
