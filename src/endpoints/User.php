@@ -6,6 +6,7 @@ use PH7\JustHttp\StatusCode;
 use PH7\Learnphp\validation\exception\InvalidValidationException;
 use PH7\Learnphp\validation\UserValidation;
 use PH7\PhpHttpResponseHeader\Http;
+use Ramsey\Uuid\Uuid;
 use Respect\Validation\Validator as v;
 
 class User{
@@ -21,9 +22,10 @@ public readonly string $phone,
     }
 
     public function create(mixed $data): object{
-         print_r($data);
+
         $userValidation = new UserValidation($data);
     if($userValidation->isCreationSchemaValid()){
+        $data->userId = Uuid::uuid4();
         return $data;
     }
     else{
