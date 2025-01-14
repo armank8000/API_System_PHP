@@ -3,7 +3,7 @@ namespace PH7\Learnphp\routes;
 
 use Exception;
 use PH7\Learnphp\endpoints\User;
-use PH7\Learnphp\exception\InvalidValidationException;
+use PH7\Learnphp\validation\exception\InvalidValidationException;
 
 require_once dirname(__DIR__) ."/endpoints/User.php";
 
@@ -20,7 +20,7 @@ case UPDATE = 'update ';
 
  
 public function getResponse(): string{
-//$userid = $_GET['user_id'] ?? 0;
+$userId = $_GET['user_id'] ?? "null";
 
 $postbody = json_decode(file_get_contents('php://input'));
 //    $fname = $postbody['first'];
@@ -40,9 +40,9 @@ $postbody = json_decode(file_get_contents('php://input'));
             self::CREATE => $user->create($postbody),
             // default => $user->retrieveAll(),
             self::RETRIEVEAll => $user->retrieveAll(),
-            self::RETRIEVE => $user->retrieve(),
-            self::UPDATE => $user->update(),
-            self::REMOVE => $user->remove($user),
+            self::RETRIEVE => $user->retrieve($userId),
+            self::UPDATE => $user->update($postbody),
+            self::REMOVE => $user->remove($userId),
 
         };
     }catch (InvalidValidationException | Exception $e){

@@ -2,17 +2,19 @@
 namespace PH7\Learnphp\endpoints;
 
 
-
 use PH7\JustHttp\StatusCode;
-use PH7\Learnphp\exception\InvalidValidationException;
+use PH7\Learnphp\validation\exception\InvalidValidationException;
+use PH7\Learnphp\validation\UserValidation;
 use PH7\PhpHttpResponseHeader\Http;
 use Respect\Validation\Validator as v;
+
 class User{
+
+    public readonly ?string $userId;
     public function __construct(
 public readonly string $name,
 public readonly string $email,
 public readonly string $phone,
-
     ){
 
 
@@ -20,15 +22,8 @@ public readonly string $phone,
 
     public function create(mixed $data): object{
          print_r($data);
-        $minimumNameLength = 2;
-        $maximumNameLength = 30;
-
-
-     $schemeValidation = v::attribute('first', v::stringType()->length($minimumNameLength, $maximumNameLength))
-        ->attribute('last', v::stringType()->length($minimumNameLength  , $maximumNameLength))
-            ->attribute('email', v::email(),mandatory: false)
-            ->attribute('phone', v::phone(),mandatory: false);
-    if($schemeValidation->validate($data)){
+        $userValidation = new UserValidation($data);
+    if($userValidation->isCreationSchemaValid()){
         return $data;
     }
     else{
@@ -42,16 +37,39 @@ public readonly string $phone,
 return [];
 }
 
-public function retrieve(): self{
-return $this;
+public function retrieve(string $userId): self{
+
+
+    if(v::uuid(version: 4)->validate($userId)){
+        $this->userId = $userId;
+        return $this;
+    }
+    Http::setHeadersByCode(StatusCode::NOT_FOUND);
+
+    throw new InvalidValidationException("invalid UUID");
 }
 
-public function update(): self{
-    return $this;
+public function update(mixed $postBody): object{
+    $userValidation = new UserValidation($postBody);
+    if($userValidation->isUpdateSchemaValid()){
+        return $postBody;
 }
+    Http::setHeadersByCode(StatusCode::BAD_REQUEST);
+    throw new InvalidValidationException("invalid data");
 
-public function remove(self $user): self{
-    return $this;
+    }
+
+public function remove(string $userId): bool{
+    if(v::uuid(version: 4)->validate($userId)){
+        $this->userId = $userId;
+
+    }
+    else{
+        Http::setHeadersByCode(StatusCode::NOT_FOUND);
+
+        throw new InvalidValidationException("invalid UUID");
+    }
+        return true;
 }
 
 
