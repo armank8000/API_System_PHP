@@ -6,4 +6,5 @@ switch ($resource) {
     case 'user':
         return require_once 'UserAction.php';
         default:
+            return require_once 'main.routes.php';
     }
