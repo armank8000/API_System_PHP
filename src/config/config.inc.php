@@ -1,6 +1,30 @@
 <?php
-namespace ph7\LearnPHP\config;
+
+namespace PH7\Learnphp\config;
+
+
 use Dotenv\Dotenv;
+
+enum Environment: string{
+    case PRODUCTION = 'production';
+    case DEVELOPMENT = 'development';
+
+    public function environmentName():string{
+        return match ($this) {
+            self::PRODUCTION => 'production',
+            self::DEVELOPMENT => 'development',
+
+        };
+    }
+
+
+}
+
+
+
+
+
+
 
 $path = dirname((__DIR__),2);
 $dotenv = Dotenv::createImmutable($path);

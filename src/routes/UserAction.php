@@ -2,10 +2,10 @@
 namespace PH7\Learnphp\routes;
 
 use Exception;
-use PH7\Learnphp\endpoints\User;
+use PH7\Learnphp\Service\User;
 use PH7\Learnphp\validation\exception\InvalidValidationException;
 
-require_once dirname(__DIR__) ."/endpoints/User.php";
+require_once dirname(__DIR__) . "/Service/User.php";
 
 
 enum UserAction: string
@@ -20,7 +20,7 @@ case UPDATE = 'update ';
 
  
 public function getResponse(): string{
-$userId = $_GET['user_id'] ?? "null";
+$userId = $_REQUEST['id'] ?? "null";
 
 $postbody = json_decode(file_get_contents('php://input'));
 //    $fname = $postbody['first'];
@@ -58,7 +58,7 @@ return json_encode($response);
 }
 
 
-$action = $_GET["action"] ?? null;
+$action = $_REQUEST["action"] ?? null;
 
 
 $useraction = match($action){
@@ -75,11 +75,3 @@ echo $useraction->getResponse();
 
 
 
-
-// $userAction = match ($action) {
-//     'create' => UserAction::CREATE,
-//     'retrieve' => UserAction::RETRIEVE,
-//     'default' => UserAction::RETRIEVEAll,
-//     'remove' => UserAction::REMOVE,
-//     'update' => UserAction::UPDATE,
-// };
