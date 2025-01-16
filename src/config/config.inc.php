@@ -1,6 +1,6 @@
 <?php
 
-namespace PH7\LearnPHP\Config;
+namespace PH7\Learnphp\config;
 
 
 use Dotenv\Dotenv;
