@@ -5,7 +5,7 @@ use Exception;
 use PH7\Learnphp\Service\User;
 use PH7\Learnphp\validation\exception\InvalidValidationException;
 
-require_once dirname(__DIR__) . "/Service/User.php";
+
 
 
 enum UserAction: string
@@ -33,7 +33,7 @@ $postbody = json_decode(file_get_contents('php://input'));
 
 
     //$user = new User($fname." ".$lname, $email, $phone);
-    $user = new User(" arman", "kumar", "62622611");
+    $user = new User();
 
    try {
         $response = match ($this) {
@@ -42,7 +42,7 @@ $postbody = json_decode(file_get_contents('php://input'));
             self::RETRIEVEAll => $user->retrieveAll(),
             self::RETRIEVE => $user->retrieve($userId),
             self::UPDATE => $user->update($postbody),
-            self::REMOVE => $user->remove($userId),
+            self::REMOVE => $user->remove($postbody),
 
         };
     }catch (InvalidValidationException | Exception $e){
@@ -64,7 +64,7 @@ $action = $_REQUEST["action"] ?? null;
 $useraction = match($action){
         'create' => UserAction::CREATE,
     'retrieve' => UserAction::RETRIEVE,
-    'default' => UserAction::RETRIEVEAll,
+    'retrieveAll' => UserAction::RETRIEVEAll,
     'remove' => UserAction::REMOVE,
     'update' => UserAction::UPDATE,
 };

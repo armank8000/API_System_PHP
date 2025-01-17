@@ -9,20 +9,13 @@ use PH7\Learnphp\validation\exception\InvalidValidationException;
 use PH7\Learnphp\validation\UserValidation;
 use PH7\PhpHttpResponseHeader\Http;
 use Ramsey\Uuid\Uuid;
+use RedBeanPHP\RedException\SQL;
 use Respect\Validation\Validator as v;
 
 class User{
 
     public readonly ?string $userId;
     const  DATE_TIME_FORMAT = 'Y-m-d H:i:s';
-    public function __construct(
-public readonly string $name,
-public readonly string $email,
-public readonly string $phone,
-    ){
-
-
-    }
 
     public function create(mixed $data): object{
 
@@ -40,7 +33,7 @@ public readonly string $phone,
 try{
     UserDal::create($userEntity);
 
-}catch (\RedBeanPHP\RedException\SQL $exception){
+}catch (SQL $exception){
     Http::setHeadersByCode(StatusCode::INTERNAL_SERVER_ERROR);
 
     $data=[];
@@ -58,15 +51,21 @@ try{
     }
 
     public function retrieveAll(): array{
-return [];
+       $users = UserDal::getAll();
+       return array_map(function (object $data){
+           unset($data['id']);
+           return $data;
+       }, $users);
+
 }
 
-public function retrieve(string $userId): self{
+public function retrieve(string $userId): ?array{
 
 
     if(v::uuid(version: 4)->validate($userId)){
-        $this->userId = $userId;
-        return $this;
+       $data = UserDal::get($userId);
+        unset($data['id']);
+        return $data;
     }
     Http::setHeadersByCode(StatusCode::NOT_FOUND);
 
@@ -83,9 +82,10 @@ public function update(mixed $postBody): object{
 
     }
 
-public function remove(string $userId): bool{
-    if(v::uuid(version: 4)->validate($userId)){
-        $this->userId = $userId;
+public function remove(object $data): bool{
+        $userSchema = new UserValidation($data);
+    if($userSchema->isRemoveSchemaValid()){
+       return UserDal::remove($data->user_uuid);
 
     }
     else{
@@ -93,7 +93,6 @@ public function remove(string $userId): bool{
 
         throw new InvalidValidationException("invalid UUID");
     }
-        return true;
 }
 
 

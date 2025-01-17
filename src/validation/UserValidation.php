@@ -9,7 +9,7 @@ class UserValidation
 
 private const minimumNameLength = 2;
 private const maximumNameLength = 30;
-public function __construct(private mixed $data){
+public function __construct(private readonly mixed $data){
 
 }
 
@@ -32,6 +32,11 @@ public function isCreationSchemaValid(): bool{
         return $this->isCreationSchemaValid();
 
     }
+
+    public function isRemoveSchemaValid(): bool{
+      return  v::attribute('user_uuid',v::uuid(version: 4))->validate($this->data);
+    }
+
 
 
 
