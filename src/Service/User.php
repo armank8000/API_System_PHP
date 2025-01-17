@@ -14,7 +14,7 @@ use Respect\Validation\Validator as v;
 
 class User{
 
-    public readonly ?string $userId;
+//    public readonly ?string $userId;
     const  DATE_TIME_FORMAT = 'Y-m-d H:i:s';
 
     public function create(mixed $data): object{
