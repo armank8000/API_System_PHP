@@ -5,10 +5,10 @@ namespace PH7\Learnphp\Entity;
 class User
 {
     private string $userUuid;
-    private string $firstName;
-    private string $lastName;
+    private ?string $firstName = null;
+    private ?string $lastName = null;
     private string $email;
-    private string $phone;
+    private ?string $phone  = null;
     private string $password;
 
     private string $createdDate;
@@ -31,7 +31,7 @@ class User
     }
 
 
-    public function getFirstName(): string
+    public function getFirstName(): ?string
     {
         return $this->firstName;
     }
@@ -42,7 +42,7 @@ class User
     }
 
 
-    public function getLastName(): string
+    public function getLastName(): ?string
     {
         return $this->lastName;
     }
@@ -69,7 +69,7 @@ class User
     /**
      * @return string
      */
-    public function getPhone(): string
+    public function getPhone(): ?string
     {
         return $this->phone;
     }

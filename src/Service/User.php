@@ -9,7 +9,6 @@ use PH7\Learnphp\validation\exception\InvalidValidationException;
 use PH7\Learnphp\validation\UserValidation;
 use PH7\PhpHttpResponseHeader\Http;
 use Ramsey\Uuid\Uuid;
-use RedBeanPHP\RedException\SQL;
 use Respect\Validation\Validator as v;
 
 class User{
@@ -17,7 +16,7 @@ class User{
 //    public readonly ?string $userId;
     const  DATE_TIME_FORMAT = 'Y-m-d H:i:s';
 
-    public function create(mixed $data): object{
+    public function create(mixed $data): object|array{
 
         $userValidation = new UserValidation($data);
     if($userValidation->isCreationSchemaValid()){
@@ -30,23 +29,17 @@ class User{
             ->setEmail($data->email)
             ->setPhone($data->phone)
             ->setCreatedDate(date(self::DATE_TIME_FORMAT));
-try{
-    UserDal::create($userEntity);
 
-}catch (SQL $exception){
-    Http::setHeadersByCode(StatusCode::INTERNAL_SERVER_ERROR);
-
-    $data=[];
-}
-
-
-
+   if (UserDal::create($userEntity)===false){
+       Http::setHeadersByCode(StatusCode::INTERNAL_SERVER_ERROR);
+       $data=[];
+   }
         return $data;
     }
-    else{
+
         Http::setHeadersByCode(StatusCode::BAD_REQUEST);
         throw new InvalidValidationException("invalid data");
-    }
+
 
     }
 
@@ -72,12 +65,29 @@ public function retrieve(string $userId): ?array{
     throw new InvalidValidationException("invalid UUID");
 }
 
-public function update(mixed $postBody): object{
+public function update(mixed $postBody): object|array{
     $userValidation = new UserValidation($postBody);
     if($userValidation->isUpdateSchemaValid()){
-        return $postBody;
+        $userUuid = $postBody->user_uuid;
+        $userEntity = new UserEntity();
+        if(!empty($postBody->first)){
+            $userEntity->setFirstName($postBody->first);
+        }
+        if(!empty($postBody->last)){
+            $userEntity->setLastName($postBody->last);
+        }
+        if(!empty($postBody->phone)){
+            $userEntity->setPhone($postBody->phone);
+        }
+
+       if( UserDal::update($userUuid, $userEntity)===false) {
+
+           Http::setHeadersByCode(StatusCode::BAD_REQUEST);
+
+           return [];
+       }
+       return  $postBody;
 }
-    Http::setHeadersByCode(StatusCode::BAD_REQUEST);
     throw new InvalidValidationException("invalid data");
 
     }
