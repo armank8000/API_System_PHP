@@ -1,11 +1,15 @@
 <?php
 
+use PH7\Learnphp\validation\exception\NotFoundException;
+
 $resource = $_REQUEST['resource'] ?? null;
 
-switch ($resource) {
-    case 'user':
-
-        return require_once 'UserAction.php';
-        default:
-            return require_once 'main.routes.php';
-    }
+try{
+    return match ($resource) {
+        'user' => require_once 'UserAction.php',
+        'foodItem' => require_once 'foodAction.php',
+        default => require_once 'not-found.routes.php',
+    };
+}catch(NotFoundException $e){
+    return require_once 'not-found.routes.php';
+}

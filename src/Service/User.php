@@ -5,9 +5,11 @@ namespace PH7\Learnphp\Service;
 use PH7\JustHttp\StatusCode;
 use PH7\Learnphp\DAL\UserDal;
 use PH7\Learnphp\Entity\User as UserEntity;
+use PH7\Learnphp\routes\Http;
 use PH7\Learnphp\validation\exception\InvalidValidationException;
+use PH7\Learnphp\validation\exception\NotFoundException;
 use PH7\Learnphp\validation\UserValidation;
-use PH7\PhpHttpResponseHeader\Http;
+use PH7\PhpHttpResponseHeader\Http as HttpResponse;
 use Ramsey\Uuid\Uuid;
 use Respect\Validation\Validator as v;
 
@@ -17,6 +19,8 @@ class User{
     const  DATE_TIME_FORMAT = 'Y-m-d H:i:s';
 
     public function create(mixed $data): object|array{
+
+
 
         $userValidation = new UserValidation($data);
     if($userValidation->isCreationSchemaValid()){
@@ -31,13 +35,14 @@ class User{
             ->setCreatedDate(date(self::DATE_TIME_FORMAT));
 
    if (UserDal::create($userEntity)===false){
-       Http::setHeadersByCode(StatusCode::INTERNAL_SERVER_ERROR);
+       HttpResponse::setHeadersByCode(StatusCode::INTERNAL_SERVER_ERROR);
        $data=[];
    }
+
         return $data;
     }
 
-        Http::setHeadersByCode(StatusCode::BAD_REQUEST);
+        HttpResponse::setHeadersByCode(StatusCode::BAD_REQUEST);
         throw new InvalidValidationException("invalid data");
 
 
@@ -60,12 +65,15 @@ public function retrieve(string $userId): ?array{
         unset($data['id']);
         return $data;
     }
-    Http::setHeadersByCode(StatusCode::NOT_FOUND);
+    HttpResponse::setHeadersByCode(StatusCode::NOT_FOUND);
 
     throw new InvalidValidationException("invalid UUID");
 }
 
 public function update(mixed $postBody): object|array{
+
+
+
     $userValidation = new UserValidation($postBody);
     if($userValidation->isUpdateSchemaValid()){
         $userUuid = $postBody->user_uuid;
@@ -82,7 +90,7 @@ public function update(mixed $postBody): object|array{
 
        if( UserDal::update($userUuid, $userEntity)===false) {
 
-           Http::setHeadersByCode(StatusCode::BAD_REQUEST);
+           HttpResponse::setHeadersByCode(StatusCode::BAD_REQUEST);
 
            return [];
        }
@@ -92,14 +100,18 @@ public function update(mixed $postBody): object|array{
 
     }
 
-public function remove(object $data): bool{
-        $userSchema = new UserValidation($data);
+public function remove(mixed $data): bool{
+
+
+
+
+    $userSchema = new UserValidation($data);
     if($userSchema->isRemoveSchemaValid()){
        return UserDal::remove($data->user_uuid);
 
     }
     else{
-        Http::setHeadersByCode(StatusCode::NOT_FOUND);
+        HttpResponse::setHeadersByCode(StatusCode::NOT_FOUND);
 
         throw new InvalidValidationException("invalid UUID");
     }
