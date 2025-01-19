@@ -4,8 +4,7 @@ namespace PH7\Learnphp\routes;
 use Exception;
 use PH7\Learnphp\Service\User;
 use PH7\Learnphp\validation\exception\InvalidValidationException;
-
-
+use PH7\Learnphp\validation\exception\NotFoundException;
 
 
 enum UserAction: string
@@ -36,6 +35,22 @@ $postbody = json_decode(file_get_contents('php://input'));
     $user = new User();
 
    try {
+
+       $expectHttpMethod = match($this){
+         self::CREATE => Http::POST_METHOD,
+           self::RETRIEVEAll => Http::GET_METHOD,
+           self::RETRIEVE => Http::GET_METHOD,
+           self::REMOVE => Http::DELETE_METHOD,
+           self::UPDATE => Http::POST_METHOD,
+       };
+
+      if( Http::doesHttpMethodMatch($expectHttpMethod) === false){
+          throw new NotFoundException('The requested method is invalid');
+
+      }
+
+
+
         $response = match ($this) {
             self::CREATE => $user->create($postbody),
             // default => $user->retrieveAll(),
@@ -61,17 +76,17 @@ return json_encode($response);
 $action = $_REQUEST["action"] ?? null;
 
 
-$useraction = match($action){
-        'create' => UserAction::CREATE,
-    'retrieve' => UserAction::RETRIEVE,
-    'retrieveAll' => UserAction::RETRIEVEAll,
-    'remove' => UserAction::REMOVE,
-    'update' => UserAction::UPDATE,
-};
+$userAction = UserAction::tryFrom($action);
+if($userAction){
+    echo $userAction->getResponse();
+}
+else {
+    require_once 'not-found.routes.php';
+}
 
 
 
-echo $useraction->getResponse();
+
 
 
 
