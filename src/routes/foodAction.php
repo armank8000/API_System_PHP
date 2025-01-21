@@ -13,7 +13,7 @@ enum foodAction: string
 
 
  case RETRIEVEAll = 'retrieveAll';
-case RETRIEVE = 'retrieve ';
+case RETRIEVE = 'retrieve';
 
 public function getResponse(): string{
 $foodId = $_REQUEST['id'] ?? "null";

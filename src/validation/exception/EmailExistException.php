@@ -2,7 +2,9 @@
 
 namespace PH7\Learnphp\validation\exception;
 
-class EmailExistException
+use RuntimeException;
+
+class EmailExistException extends RuntimeException
 {
 
 }

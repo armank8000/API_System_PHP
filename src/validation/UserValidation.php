@@ -8,7 +8,13 @@ class UserValidation
 {
 
 private const minimumNameLength = 2;
+
 private const maximumNameLength = 30;
+
+
+    private const maximumPasswordLength = 20;
+    private const minimumPasswordLength = 8;
+
 public function __construct(private readonly mixed $data){
 
 }
@@ -22,6 +28,7 @@ public function isCreationSchemaValid(): bool{
     $schemeValidation = v::attribute('first', v::stringType()->length(self::minimumNameLength, self::maximumNameLength))
         ->attribute('last', v::stringType()->length(self::minimumNameLength  , self::maximumNameLength))
         ->attribute('email', v::email())
+        ->attribute('password', v::stringType()->length(self::minimumPasswordLength, self::maximumPasswordLength))
         ->attribute('phone', v::phone(),mandatory: false);
     return $schemeValidation->validate($this->data);
 

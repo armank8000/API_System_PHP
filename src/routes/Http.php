@@ -11,7 +11,7 @@ public const PUT_METHOD = 'PUT';
 public const DELETE_METHOD = 'DELETE';
 
 
-   public static function doesHttpMethodMatch(string $httpMethod){
+   public static function doesHttpMethodMatch(string $httpMethod): bool{
         return strtolower($_SERVER['REQUEST_METHOD']) === strtolower($httpMethod);
     }
 

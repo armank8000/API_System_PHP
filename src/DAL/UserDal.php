@@ -13,29 +13,28 @@ final class UserDal
    public const TABLE_NAME = 'users';
 
 
-    public static function create(UserEntity $userEntity) : int|string|false {
-       $userBean = R::dispense(self::TABLE_NAME);
-       $userBean->user_uuid = $userEntity->getUserUuid();
+    public static function create(UserEntity $userEntity) : int|string|false
+    {
+        $userBean = R::dispense(self::TABLE_NAME);
+        $userBean->user_uuid = $userEntity->getUserUuid();
         $userBean->firstname = $userEntity->getFirstName();
-       $userBean->last_name = $userEntity->getLastName();
-       $userBean->email = $userEntity->getEmail();
-       $userBean->phone = $userEntity->getPhone();
-       $userBean->created_date = $userEntity->getCreatedDate();
+        $userBean->last_name = $userEntity->getLastName();
+        $userBean->email = $userEntity->getEmail();
+        $userBean->phone = $userEntity->getPhone();
+        $userBean->password = $userEntity->getPassword();
+        $userBean->created_date = $userEntity->getCreatedDate();
 
 
-        try{
+        try {
             return R::store($userBean);
 
-        }catch (SQL $exception){
-           Http::setHeadersByCode(StatusCode::BAD_REQUEST);
-        }finally{
+        } catch (SQL $exception) {
+            Http::setHeadersByCode(StatusCode::BAD_REQUEST);
+        } finally {
             R::close();
         }
-
-       R::close();
-       return false;
-
-   }
+        return false;
+    }
 
 
     public static function update(string $userId, UserEntity $userEntity) : int|string|false {
@@ -88,6 +87,10 @@ return false;
        return false;
    }
 
+
+    public static function doesEmailExist(string $email): bool{
+       return R::findOne(self::TABLE_NAME, 'email = :email', ['email' => $email]) !== null;
+    }
 
 
 
