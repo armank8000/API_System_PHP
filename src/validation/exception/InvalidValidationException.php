@@ -2,9 +2,9 @@
 
 namespace PH7\Learnphp\validation\exception;
 
-use RuntimeException;
+use InvalidArgumentException;
 
-class InvalidValidationException extends RuntimeException
+class InvalidValidationException extends InvalidArgumentException
 {
 
 }

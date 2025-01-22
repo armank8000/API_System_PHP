@@ -68,7 +68,11 @@ return false;
 
    }
 
-
+public static function getByEmail(string $email): ?array{
+        $binding = ['email' => $email];
+        $userBean = R::findOne(self::TABLE_NAME, 'email = :email', $binding);
+        return $userBean?->export();
+    }
 
    public static function get(string $userUuid): ?array{
       $data= R::findOne(self::TABLE_NAME, 'user_uuid = :userUuid', ['userUuid' => $userUuid]);

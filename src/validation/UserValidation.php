@@ -47,9 +47,13 @@ return $schemaValidation->validate($this->data);
       return  v::attribute('user_uuid',v::uuid(version: 4))->validate($this->data);
     }
 
+    public function isLoginSchemaValid(): bool
+    {
 
+        $schemaValidation = v::attribute('email', v::stringType())
+            ->attribute('password', v::stringType()->length(self::minimumPasswordLength, self::maximumPasswordLength));
+        return $schemaValidation->validate($this->data);
 
-
-
+    }
 
 }

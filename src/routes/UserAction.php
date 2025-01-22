@@ -12,7 +12,7 @@ use PH7\PhpHttpResponseHeader\Http as HttpResponse;
 
 enum UserAction: string
 {
-
+case LOGIN = 'login';
 case CREATE = 'create';
  case RETRIEVEAll = 'retrieveAll';
 case RETRIEVE = 'retrieve';
@@ -33,6 +33,7 @@ $postBody = json_decode(file_get_contents('php://input'));
    try {
 
        $expectHttpMethod = match($this){
+           self::LOGIN => Http::POST_METHOD,
          self::CREATE => Http::POST_METHOD,
            self::RETRIEVEAll => Http::GET_METHOD,
            self::RETRIEVE => Http::GET_METHOD,
@@ -49,6 +50,7 @@ $postBody = json_decode(file_get_contents('php://input'));
 
         $response = match ($this) {
             self::CREATE => $user->create($postBody),
+            self::LOGIN => $user->login($postBody),
             // default => $user->retrieveAll(),
             self::RETRIEVEAll => $user->retrieveAll(),
             self::RETRIEVE => $user->retrieve($userId),
