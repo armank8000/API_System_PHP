@@ -2,12 +2,14 @@
 namespace PH7\Learnphp\Service;
 
 
+use Firebase\JWT\JWT;
 use PH7\JustHttp\StatusCode;
 use PH7\Learnphp\DAL\UserDal;
 use PH7\Learnphp\Entity\User as UserEntity;
 use PH7\Learnphp\routes\Http;
+use PH7\Learnphp\validation\exception\EmailExistException;
+use PH7\Learnphp\validation\exception\InvalidCredentialException;
 use PH7\Learnphp\validation\exception\InvalidValidationException;
-use PH7\Learnphp\validation\exception\NotFoundException;
 use PH7\Learnphp\validation\UserValidation;
 use PH7\PhpHttpResponseHeader\Http as HttpResponse;
 use Ramsey\Uuid\Uuid;
@@ -18,33 +20,80 @@ class User{
 //    public readonly ?string $userId;
     const  DATE_TIME_FORMAT = 'Y-m-d H:i:s';
 
-    public function create(mixed $data): object|array{
+
+    public function login(mixed $data): ?array
+    {
+        $userValidation = new UserValidation($data);
+        if ($userValidation->isLoginSchemaValid()) {
+            if (userDal::doesEmailExist($data->email)) {
+                $user = UserDal::getByEmail($data->email);
+                if ($user && password_verify($data->password, $user['password'])) {
+                    $userName = "{$user['first_name']} {$user['last_name']}";
+                    $currentTime = time();
+                    $jwtToken = JWT::encode(
+                        [
+                            'iss' => $_ENV['APP_URL'],
+                            'lat' => $currentTime,
+                            'exp' => $currentTime + $_ENV['JWT_TIME_EXPIRATION'],
+                            'data' => [
+                                'email' => $data->email,
+                                'name' => $userName,
+                            ]
+                        ],
+                        $_ENV['JWT_KEY'],
+                        $_ENV['JWT_ALGO_ENCRYPTION']
 
 
+                    );
+                    return [
+                        'token' => $jwtToken,
+                        'message' => sprintf('%s successfully logged in', $userName)
+                    ];
+                }
+            }
+                throw new InvalidCredentialException('Credentials invalid');
+            }
+            throw new InvalidValidationException("invalid email");
+        }
+
+
+
+    public function create(mixed $data): object|array
+    {
 
         $userValidation = new UserValidation($data);
-    if($userValidation->isCreationSchemaValid()){
         $userId = Uuid::uuid4();
-        $userEntity = new UserEntity();
-        $userEntity
-            ->setUserUuid($userId)
-            ->setFirstName($data->first)
-            ->setLastName($data->last)
-            ->setEmail($data->email)
-            ->setPhone($data->phone)
-            ->setCreatedDate(date(self::DATE_TIME_FORMAT));
+        if ($userValidation->isCreationSchemaValid()) {
+            $userEntity = new UserEntity();
+            $userEntity
+                ->setUserUuid($userId)
+                ->setFirstName($data->first)
+                ->setLastName($data->last)
+                ->setPassword(password_hash($data->password, PASSWORD_ARGON2I))
+                ->setEmail($data->email)
+                ->setPhone($data->phone)
+                ->setCreatedDate(date(self::DATE_TIME_FORMAT));
 
-   if (UserDal::create($userEntity)===false){
-       HttpResponse::setHeadersByCode(StatusCode::INTERNAL_SERVER_ERROR);
-       $data=[];
-   }
+
+            if (UserDal::doesEmailExist($userEntity->getEmail())) {
+                throw new EmailExistException('Email already exist');
+            }
+
+            if (UserDal::create($userEntity) === false) {
+                HttpResponse::setHeadersByCode(StatusCode::INTERNAL_SERVER_ERROR);
+                $data = [];
+            }
+
+          // Send a 201 when the user has been successfully added to DB
+        HttpResponse::setHeadersByCode(StatusCode::CREATED);
+
+
+        $data->userUuid = $userId;
 
         return $data;
-    }
-
-        HttpResponse::setHeadersByCode(StatusCode::BAD_REQUEST);
+        }
+            HttpResponse::setHeadersByCode(StatusCode::BAD_REQUEST);
         throw new InvalidValidationException("invalid data");
-
 
     }
 
