@@ -3,8 +3,8 @@
 namespace PH7\Learnphp\DAL;
 
 use PH7\JustHttp\StatusCode;
+use PH7\Learnphp\Entity\Item as ItemEntity;
 use PH7\PhpHttpResponseHeader\Http;
-use Ramsey\Uuid\Uuid;
 use RedBeanPHP\R;
 use RedBeanPHP\RedException\SQL;
 
@@ -12,30 +12,46 @@ class foodItemDal
 {
     public const TABLE_NAME = 'fooditem';
 
-    public static function get(string $foodUuid): ?array{
+    public static function get(string $foodUuid): ItemEntity{
         $data= R::findOne(self::TABLE_NAME, 'item_uuid = :foodUuid', ['foodUuid' => $foodUuid]);
-        return $data->export();
+        return (new ItemEntity())->unSerialize($data?->export());
     }
     public static function getAll(): array{
-        return R::findAll(self::TABLE_NAME);
+        $itemBean = R::findAll(self::TABLE_NAME);
+        $areAnyItem = $itemBean && count($itemBean);
 
+        if (!$areAnyItem) {
+            return [];
+        }
+
+        return array_map(function (object $itemBean): array {
+$itemEntity = (new ItemEntity())->unSerialize($itemBean->export());
+
+return [
+    'item_uuid' => $itemEntity->getItemUuid(),
+    'name' => $itemEntity->getName(),
+    'price' => $itemEntity->getPrice(),
+    'available' => $itemEntity->getAvailable(),
+];
+        },$itemBean);
     }
 
-    public static function createDefaultItem():void{
-        $itemBeam = R::dispense(self::TABLE_NAME);
-        $itemBeam->item_uuid = (string)Uuid::uuid4();
-        $itemBeam->item_name = 'sample';
-        $itemBeam->price = "$65.1";
-        $itemBeam->available = true;
-        try{
-             R::store($itemBeam);
+    public static function createDefaultItem(ItemEntity $itemEntity):int|string|false{
 
-        }catch (SQL $exception){
+        $itemBeam = R::dispense(self::TABLE_NAME);
+        $itemBeam->item_uuid = $itemEntity->getItemUuid();
+        $itemBeam->item_name = $itemEntity->getName();
+        $itemBeam->price = $itemEntity->getPrice();
+        $itemBeam->available = $itemEntity->getAvailable();
+        try{
+            return R::store($itemBeam);
+
+        }catch (SQL){
             Http::setHeadersByCode(StatusCode::BAD_REQUEST);
         }finally{
             R::close();
         }
-
+return false;
     }
 
 }

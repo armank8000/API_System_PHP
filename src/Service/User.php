@@ -2,7 +2,9 @@
 namespace PH7\Learnphp\Service;
 
 
+use Firebase\JWT\ExpiredException;
 use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 use PH7\JustHttp\StatusCode;
 use PH7\Learnphp\DAL\UserDal;
 use PH7\Learnphp\Entity\User as UserEntity;
@@ -44,6 +46,8 @@ class User{
 
 
                     );
+
+
                     return [
                         'token' => $jwtToken,
                         'message' => sprintf('%s successfully logged in', $userName)
@@ -55,7 +59,16 @@ class User{
             throw new InvalidValidationException("invalid email");
         }
 
+public function validateToken(mixed $token): bool{
+    try{
+        $decoded = JWT::decode($token->h, new Key($_ENV['JWT_KEY'], $_ENV['JWT_ALGO_ENCRYPTION'],));
+        print_r($decoded->exp);
+        return true;
+    }catch (ExpiredException $e){
+        throw new ExpiredException('Expired token');
 
+    }
+}
 
     public function create(mixed $data): object|array
     {
