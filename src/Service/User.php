@@ -6,7 +6,6 @@ use Firebase\JWT\JWT;
 use PH7\JustHttp\StatusCode;
 use PH7\Learnphp\DAL\UserDal;
 use PH7\Learnphp\Entity\User as UserEntity;
-use PH7\Learnphp\routes\Http;
 use PH7\Learnphp\validation\exception\EmailExistException;
 use PH7\Learnphp\validation\exception\InvalidCredentialException;
 use PH7\Learnphp\validation\exception\InvalidValidationException;
@@ -27,8 +26,8 @@ class User{
         if ($userValidation->isLoginSchemaValid()) {
             if (userDal::doesEmailExist($data->email)) {
                 $user = UserDal::getByEmail($data->email);
-                if ($user && password_verify($data->password, $user['password'])) {
-                    $userName = "{$user['first_name']} {$user['last_name']}";
+                if ($user->getEmail() && password_verify($data->password, $user->getPassword())) {
+                    $userName = "{$user->getFirstName()} {$user->getLastName()}";
                     $currentTime = time();
                     $jwtToken = JWT::encode(
                         [
@@ -97,12 +96,9 @@ class User{
 
     }
 
-    public function retrieveAll(): array{
-       $users = UserDal::getAll();
-       return array_map(function (object $data){
-           unset($data['id']);
-           return $data;
-       }, $users);
+    public function retrieveAll(): ?array{
+       return UserDal::getAll();
+
 
 }
 
@@ -110,9 +106,20 @@ public function retrieve(string $userId): ?array{
 
 
     if(v::uuid(version: 4)->validate($userId)){
-       $data = UserDal::get($userId);
-        unset($data['id']);
-        return $data;
+      if ($data = UserDal::get($userId)){
+         if($data->getUserUuid() ){
+             return [
+                 "id" => $data->getUserUuid(),
+                 "first" => $data->getFirstName(),
+                 "last" => $data->getLastName(),
+                 "email" => $data->getEmail(),
+                 "phone" => $data->getPhone(),
+                 "created_date" => $data->getCreatedDate(),
+             ];
+         }
+      }
+
+
     }
     HttpResponse::setHeadersByCode(StatusCode::NOT_FOUND);
 

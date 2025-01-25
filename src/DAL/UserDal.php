@@ -17,7 +17,7 @@ final class UserDal
     {
         $userBean = R::dispense(self::TABLE_NAME);
         $userBean->user_uuid = $userEntity->getUserUuid();
-        $userBean->firstname = $userEntity->getFirstName();
+        $userBean->first_name = $userEntity->getFirstName();
         $userBean->last_name = $userEntity->getLastName();
         $userBean->email = $userEntity->getEmail();
         $userBean->phone = $userEntity->getPhone();
@@ -68,19 +68,36 @@ return false;
 
    }
 
-public static function getByEmail(string $email): ?array{
+public static function getByEmail(string $email): UserEntity{
         $binding = ['email' => $email];
-        $userBean = R::findOne(self::TABLE_NAME, 'email = :email', $binding);
-        return $userBean?->export();
+        $user = R::findOne(self::TABLE_NAME, 'email = :email', $binding);
+   return (new UserEntity())->unserialize($user?->export());
     }
 
-   public static function get(string $userUuid): ?array{
+   public static function get(string $userUuid): UserEntity{
       $data= R::findOne(self::TABLE_NAME, 'user_uuid = :userUuid', ['userUuid' => $userUuid]);
-       return $data->export();
+       return (new UserEntity())->unserialize($data?->export());
    }
    public static function getAll(): array{
-       return R::findAll(self::TABLE_NAME);
+       $data =  R::findAll(self::TABLE_NAME);
+       if($data && count($data)){
+           return array_map(function (object $data) {
+               $userEntity = (new UserEntity())->unserialize($data->export());
 
+
+                   return [
+                       "id" => $userEntity->getUserUuid(),
+                       "first" => $userEntity->getFirstName(),
+                       "last" => $userEntity->getLastName(),
+                       "email" => $userEntity->getEmail(),
+                       "phone" => $userEntity->getPhone(),
+                       "created_date" => $userEntity->getCreatedDate(),
+                   ];
+
+
+           }, $data);
+       }
+       return [];
    }
 
    public static function remove(string $userUuid): bool{
