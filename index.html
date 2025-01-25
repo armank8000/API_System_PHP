@@ -1,167 +1,442 @@
 <!DOCTYPE html>
-
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyBerTech</title>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+   
 
-    <title>Your GitHub Profile</title>
+<style>
+    
+  *{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    list-style: none;
+    scroll-behavior: smooth;
+    text-decoration: none;
+  }
 
-    <link rel="stylesheet" href="styles.css">
+  :root{
+    --text-color: #f5f5f5;
+    --hover-color: #12f7ff;
+    --bg-color:#250821;
+    --secon-bg-color:#292e33;
+    --big-font:2.5rem;
+    --norma-font:2rem;
+    --neon-box-shadow:00.5rem #12f7ff;
+    --h2-font: 3rem;
+    --font-neon-text-shadow: 0 0 10px rgba(18, 247, 255,0.3),
+    00 20px rgba(18, 247, 255, 0.3),
+    00 30px rgba(18, 247, 255, 0.3),
+    00 40px rgba(18, 247, 255, 0.3),
+    0070px 00 80px rgba(18, 247, 255, 0.3), rgba(18, 247, 255, 0.3),
+    00 100px rgba(18, 247, 255, 0.3),
+    00 150px rgba(18, 247, 255, 0.3);
+    }
 
-    <style>
+ body{
+   font-family: "Poppins", sans-serif;
+   background-color: var(--bg-color);
+   color: var(--text-color);
+     
+  }
+header{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 20px;
+       
+}
+.logo{
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: 1px;
+        
+}
+span{
+  color: var(--hover-color);
+        
+}
+.navlist {
+  display: flex;
+            
+}
+.navlist a {
+  color: var(--text-color);
+  font-weight: 500;
+  padding: 10px 20px;
+            
+}
+.navlist a:hover {
+  color: var(--hover-color);
+  text-shadow: 0 0 10px rgba(18, 247, 255, 0.6),
+  0 0 20px rgba(18, 247, 255, 0.6),
+  0 0 30px rgba(18, 247, 255, 0.6),
+  0 0 40px  rgba(18, 247, 255, 0.6),
+  0 0 70px  rgba(18, 247, 255, 0.6),
+  0 0 80px rgba(18, 247, 255, 0.6),
+  0 0 100px rgba(18, 247, 255, 0.6),
+  0 0 150px rgba(18, 247, 255, 0.6);         
+  ;            
+}
+section{
+  padding: 100px 10%;
+}
+.home{
+  min-height: 100vh;
+  height: 100%;
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(2,1fr);
+  align-items: center;
+  grid-row: 4em;
+}
+.home-content{
+  max-width: 600px;
+}
+.home-content h1{
+  font-size: var(--big-font);
+  font-weight: 700px;
+}
 
-        body {
+.change-text{
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+.change-text h3{
+  display: inline-flex;
+  margin: 0;
+  vertical-align: top;
+}
+.change-text h3 .word{
+  position: absolute;
+  display: flex;
+  opacity: 0;
+}
 
-            font-family: Arial, sans-serif;
+.change-text h3 .word .letter{
+  transform-origin: center center 25px;
+}
 
-            margin: 0;
+.change-text h3 .word .letter.out{
+  transform: rotateX(90deg);
+  transition: 0.32s cubic-bezier(0.6,0,0.7,0.2);
+}
 
-            padding: 20px;
+.change-text h3 .word .letter.in{
+  transition: 0.38s ease;
+}
 
-            background-color: #f4f4f4;
+.change-text h3 .word .letter.behind{
+    transform: rotateX(-90deg);
+}
 
-        }
+.home-content p{
+    color: #bdbdbd;
+    line-height: 1.6;
+}
 
-        header {
+.info-box{
+    display: inline-flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 300px;
+    margin: 1rem 0 2rem;
+}
 
-            background: #24292e;
+.info-box h5{
+    font-weight: 600;
+    color: var(--text-color);
+    font-size: 1rem;
+}
 
-            color: white;
+.info-box span{
+    font-size: .9rem;
+    color: #bdbdbd;
+}
 
-            padding: 10px 20px;
+.btn-box{
+    display: flex;
+    justify-content: space-between;
+    width: 320px;
+    height: 45px;
+}
 
-            text-align: center;
+.btn-box a.btn{
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 150px;
+    height: 100%;
+    background: var(--hover-color);
+    color: var(--bg-color);
+    font-size: 1rem;
+    letter-spacing: 1px;
+    font-weight: 600;
+    transition: .6s;
+    box-shadow:var(--neon-box-shadow);
+    border-radius: 5px;
+    position: relative;overflow: hidden;
+    z-index: 1;
+    border: 2px solid var(--hover-color);
+   
+}
 
-        }
+a.btn:hover{
+    color: var(--hover-color);
+}
 
-        h1 {
+a.btn::before{
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: rgb(0, 4, 255);
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    transition: .4s;
+}
+a.btn:hover::before{
+    width: 100%;
+}
 
-            margin: 0;
+a.btn:nth-child(2){
+    background: var(--bg-color);
+    color: var(--hover-color);
+}
 
-        }
+a.btn:nth-child(2):hover{
+    color: var(--bg-color);
+}
 
-        .container {
+.social-icons a{
+    display: inline-flex;
+    width: 50px;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    background: var(--bg-color);
+    color: var(--hover-color);
+    border: 2px solid var(--hover-color);
+    transition: .6s;
+    box-shadow: 0 0 .3rem #12f7ff;
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+    margin: 10px;
+    margin-top: 30px;
+    
+}
 
-            max-width: 800px;
+.social-icons a:hover{
+    font-size: 1.5rem;
+}
 
-            margin: 20px auto;
+.social-icons a:hover{
+    color: var(--bg-color);
+}
 
-            background: white;
+.social-icons a::before{
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 0;
+    height: 100%;
+    background: var(--hover-color);
+    transition: .6s;
+    z-index: -1;
+}
 
-            padding: 20px;
+.social-icons a:hover::before{
+    width: 100%;
+}
 
-            border-radius: 8px;
+.home-image{
+    position: relative;
+      
+}
 
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+.img-box{
+    text-align: center;
+    
+}
 
-        }
+/* services*/
 
-        .projects {
 
-            margin-top: 20px;
 
-        }
 
-        .project {
 
-            margin-bottom: 15px;
 
-        }
 
-        footer {
 
-            text-align: center;
 
-            margin-top: 20px;
 
-            font-size: 0.9em;
 
-            color: #666;
 
-        }
 
-    </style>
 
+</style>
 </head>
-
 <body>
 
-
+   <!--header site-->
 <header>
-
-    <h1>Arman Kumar</h1>
-
-    <p>@armank000</p>
-
+<div class="logo"><span>C</span>yBerTech</div>
+<ul class="navlist">
+<li><a href="#home">Home</a></li>
+<li><a href="#about">About</a></li>
+<li><a href="#services">Services</a></li>
+<li><a href="#skills">Skills</a></li>
+<li><a href="#portfolio">Portfolio</a></li>
+<li><a href="#contact">Contact</a></li>
+</ul>
+<div id="menu-icon" class="bx bx-menu"></div>
 </header>
+<!--new section-->
+<section id="home" class="home">
+    <div class="home-content">
+        <h1>Hi! I'm John Pater</h1>
+        <div class="change-text">
+            <h3>And I'm</h3>
+            <h3>
+                <span class="word">Youtuber</span>
+                <span class="word">Web&nbsp;Designer</span>
+                <span class="word">Frontend&nbsp;Developer</span>
+                <span class="word">UX/UI&nbsp;Developer</span>
+                <span class="word">Graphic&nbsp;Desiger</span>
+            </h3>
+        </div>
+        <p>Product Designer and Degital Creative Director working in design field for 10 years so far.specialized in UI/UX, Branding and digital designs.</p>
 
-
-<div class="container">
-
-    <h2>About Me</h2>
-
-    <p>Welcome to my GitHub profile! I am a software developer with a passion for building software and exploring new technologies.</p>
-
-
-    <h2>Skills</h2>
-
-    <ul>
-
-        <li>Flutter & Dart</li>
-
-        <li>C++</li>
-
-        <li>PHP</li>
-
-        <li>MYSQL</li>
-
-    </ul>
-
-
-    <div class="projects">
-
-        <h2>Projects</h2>
-
-        <div class="project">
-
-            <h3><a href="https://github.com/armank8000/learnphp" target="_blank">Project 1</a></h3>
-
-            <p>A brief description of Project 1.</p>
-
+        <div class="info-box">
+            <div class="email-info">
+                <h5>Email:</h5>
+                <span>john1234@mail.com</span>
+            </div>
+            <div class="behance-info">
+                <h5>behance:</h5>
+                <span>behance.net/johnk</span>
+            </div> 
         </div>
 
-        <div class="project">
+        <div class="btn-box">
+            <a href="#" class="btn">Download CV</a>
+            <a href="#" class="btn">Hire Me Now!</a>
+            </div>
 
-            <h3><a href="https://github.com/yourusername/project2" target="_blank">Project 2</a></h3>
-
-            <p>A brief description of Project 2.</p>
-
-        </div>
-
-        <div class="project">
-
-            <h3><a href="https://github.com/yourusername/project3" target="_blank">Project 3</a></h3>
-
-            <p>A brief description of Project 3.</p>
-
-        </div>
+            <div class="social-icons">
+                <a href="#"><i class='bx bxl-facebook'></i></a>
+                <a href="#"><i class='bx bxl-instagram' ></i></a>
+                <a href="#"><i class='bx bxl-twitter' ></i></a>
+                <a href="#"><i class='bx bxl-dribbble' ></i></a>
+            </div>
 
     </div>
 
+    <div class="home-image">
+         <div class="img-box">
+        <img src="image/hacker.jpg" alt="">
+    </div>
+   
+    </div>
 </div>
+</section>
+
+<!--services-->
 
 
-<footer>
 
-    <p>Connect with me on <a href="https://linkedin.com/in/yourprofile" target="_blank">LinkedIn</a></p>
 
-</footer>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+    let words = document.querySelectorAll(".word");
+words.forEach((word)=>{
+    let letters = word.textContent.split("");
+    word.textContent=""
+    letters.forEach((letter)=>{
+        let span = document.createElement("span");
+        span.textContent = letter;
+        span.className = "letter";
+        word.append(span);
+    });
+});
+
+let currentWordIndex = 0;
+let maxWordIndex = words.length -1;
+words[currentWordIndex].style.opacity = "1";
+
+let changeText = ()=>{
+    let currentWordIndex = words[currentWordIndex];
+    let nextWord = currentWordIndex === maxWordIndex ? words[0] : words[currentWordIndex + 1];
+
+    Array.from(currentWord.children).forEach((letter,i)=>{
+        setTimeout(()=>{
+            letter.className = "letter out";
+        },i * 80);
+    });
+    nextWord.style.opacity="1";
+    Array.from(nextWord.children).forEach((letter,i)=>{
+        letter.className = "letter behind";
+        setTimeout(()=>{
+            letter.className = "letter in";
+        },340 + i * 80);
+    });
+    currentWordIndex = currentWordIndex === maxWordIndex ? 0 : currentWordIndex + 1;
+    
+};
+
+changeText();
+setInterval(changeText,3000)
+</script>
 
 </body>
-
 </html>
